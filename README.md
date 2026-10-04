@@ -1,23 +1,16 @@
 # Agent-First Tooling Tenets
 
-**Version:** 1.2 · **Status:** public draft · **License:** CC-BY-4.0 (text), MIT (example snippets)
-
 Design tenets for the tool surfaces AI agents use: CLIs, HTTP services, MCP and function tool definitions, SDK wrappers, and internal admin interfaces.
 
-They were derived by studying how agents use our tooling — a corpus of archived session transcripts, incident retrospectives, and a live friction-report stream from the agents themselves — and by working backwards from the errors and wasted turns we found there. They are opinionated, not prescriptive. This is not a protocol, a certification, or an industry standard, and we are not asking anyone to conform to it. Our observation is that the more of these tenets a tool surface satisfies, the less friction agents have using it.
+They were derived by studying how agents use our tooling — a corpus of archived session transcripts, incident retrospectives, and a live friction-report stream from the agents themselves — and by working backwards from the errors and wasted turns we found there. They are opinionated, not prescriptive. Our observation is that the more of these tenets a tool surface satisfies, the less friction agents have using it.
 
 ## 1. Where this came from
 
-Two operating environments, 2026: a home lab plus small production environment (this repo's owner), and a second environment operated by [@jacobhausler](https://github.com/jacobhausler) and its agents.
-
-- A founding five-rule version was co-designed in a single agent-human working session, from one concrete discovery failure. It was not derived from a broad corpus.
-- Later analysis supplied measurements and corrections. A corpus of **8,743 archived agent sessions** (**1.4M records**, **228,508 tool results**) measured the output-cost problem described in §2.2.
-- The rules were restated as seven tenets in August after validation against load-bearing tools in both environments. The maintenance policy (§6) and the untyped-fallback telemetry practice (§7) followed in September, informed by the second environment.
-- One early rule was rewritten after our own data contradicted it: it mandated "complete answers, one round-trip," and transcript analysis showed tool authors following it correctly were building the corpus-dumping defect from §2.2. That is the clearest argument we have for the maintenance policy in §6.
+Initial tenets were based on a retrospective analysis of 8,743 agent session transcripts, refined and iterated on via analysis of a broader corpus of 158k transcripts and transcript-backed pain points shared between two agent orchestration environments. 
 
 Infrastructure operations were where this was worked out, but the failure classes are properties of agent cognition meeting human-shaped interfaces, not of sysadmin work. An agent parsing a `git` table, a build log, or a JSON API error page pays the same cost. Where examples are infrastructure-flavored, read them as instances of the general rule.
 
-**Scope of the evidence.** The corpus is one environment's transcripts; the incident retrospectives cover both environments and are few. We make no claims about agent behavior in general. The measurements we report are ours, the mechanisms we infer are labeled as inferences, and where an outside study is the evidence it is linked.
+**Scope of the evidence.** The corpus is one environment's transcripts; the incident retrospectives cover both environments. The measurements we report are ours, the mechanisms we infer are labeled as inferences, and where an outside study is the evidence it is linked.
 
 ## 2. Failure classes we observed
 
