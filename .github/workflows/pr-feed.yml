@@ -1,0 +1,49 @@
+name: pr-feed
+# Event lane (owner ruling 2026-10-09): when a PR opens carrying an archify
+# diagram on its branch, the PR ITSELF posts the feed message to #dev-digest.
+# No poller, no submitter memory: opened-by-GitHub IS the event. Fork PRs get
+# no secrets by GitHub default (exfil-by-stranger closed); same-repo lanes do.
+# Red check = feed post failed = visible on the PR; NOT a required check, so
+# this is a signal, never an approval gate.
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+permissions:
+  contents: read
+jobs:
+  feed:
+    runs-on: ubuntu-latest
+    # one post per PR, exactly once: opened posts non-drafts only; drafts
+    # post at ready_for_review. (The first lap's double-post was MY OWN dead
+    # poller's 12:44 lap racing the Action — self-caused, not GitHub firing
+    # both events on a non-draft open. Attribution corrected at receipt.)
+    if: github.event.action == 'ready_for_review' || (github.event.action == 'opened' && github.event.pull_request.draft == false)
+    steps:
+      - uses: actions/checkout@v4
+      - name: post feed to #dev-digest
+        env:
+          TOKEN: ${{ secrets.DISCORD_FEED_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          TITLE: ${{ github.event.pull_request.title }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          LOGIN: ${{ github.event.pull_request.user.login }}
+          CREATED: ${{ github.event.pull_request.created_at }}
+          REPO: ${{ github.repository }}
+          CHANNEL: "1557817072543866972"
+        run: |
+          set -uo pipefail
+          [ -n "$TOKEN" ] || { echo "::error::DISCORD_FEED_TOKEN not set — feed cannot post"; exit 1; }
+          png=$(find docs/pr-diagrams -name '*.png' 2>/dev/null | head -1)
+          if [ -z "$png" ]; then echo "not archify-class (no diagram on branch): no feed post"; exit 0; fi
+          bead=$(echo "$TITLE" | grep -oE '\b(sys|est)-[a-z0-9]{4,}\b' | head -1 || true)
+          export BEAD="$bead"
+          payload=$(python3 -c "
+          import json, os, sys
+          line = '%s · by %s · opened %s%s' % (os.environ['REPO'], os.environ['LOGIN'], os.environ['CREATED'], (' · ' + os.environ['BEAD']) if os.environ.get('BEAD') else '')
+          print(json.dumps({'content': '**%s**\n%s\n%s' % (os.environ['TITLE'], os.environ['PR_URL'], line)}))")
+          curl -fsS -X "POST" "https://discord.com/api/v10/channels/$CHANNEL/messages" \
+            -H "Authorization: Bot $TOKEN" \
+            --form-string "payload_json=$payload" \
+            -F "file=@${png};filename=$(basename "$png")"
+          echo "feed posted for ${REPO}#${PR_NUMBER}"
+        timeout-minutes: 2
