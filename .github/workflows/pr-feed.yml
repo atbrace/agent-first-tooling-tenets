@@ -33,7 +33,7 @@ jobs:
         run: |
           set -uo pipefail
           [ -n "$TOKEN" ] || { echo "::error::DISCORD_FEED_TOKEN not set — feed cannot post"; exit 1; }
-          png=$(find docs/pr-diagrams -name '*.png' 2>/dev/null | head -1)
+          png=$(find docs/pr-diagrams -name '*.png' 2>/dev/null | head -1) || true  # -e+pipefail: missing dir must not kill the step (bare PRs red-X'd; self-caught teeth lap)
           if [ -z "$png" ]; then echo "not archify-class (no diagram on branch): no feed post"; exit 0; fi
           bead=$(echo "$TITLE" | grep -oE '\b(sys|est)-[a-z0-9]{4,}\b' | head -1 || true)
           export BEAD="$bead"
