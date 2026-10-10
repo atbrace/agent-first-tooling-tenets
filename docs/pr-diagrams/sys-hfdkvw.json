@@ -1,0 +1,231 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "PR Compliance Machine \u2014 Diagram or Two-Claim Exempt, or No Merge",
+    "quality_profile": "showcase",
+    "output": "pr-compliance-machine.html"
+  },
+  "lanes": [
+    {
+      "id": "author",
+      "label": "Author side"
+    },
+    {
+      "id": "platform",
+      "label": "GitHub enforces"
+    },
+    {
+      "id": "record",
+      "label": "Public record"
+    }
+  ],
+  "phases": [
+    {
+      "id": "forge",
+      "label": "Forge or claim",
+      "fromCol": 0,
+      "toCol": 1
+    },
+    {
+      "id": "enforce",
+      "label": "Required check blocks",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "signal",
+      "label": "Merge feeds town",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "mainPath": [
+    "author",
+    "gate",
+    "diagram",
+    "check",
+    "prot",
+    "merged",
+    "feed"
+  ],
+  "nodes": [
+    {
+      "id": "author",
+      "lane": "author",
+      "col": 0,
+      "type": "external",
+      "label": "PR Author",
+      "sublabel": "bot or human",
+      "width": 130
+    },
+    {
+      "id": "gate",
+      "lane": "author",
+      "col": 1,
+      "type": "security",
+      "label": "Compliance Choice",
+      "sublabel": "make map or make claims",
+      "width": 165
+    },
+    {
+      "id": "diagram",
+      "lane": "author",
+      "col": 2,
+      "type": "frontend",
+      "label": "Archify PNG",
+      "sublabel": "docs/pr-diagrams/*.png",
+      "width": 155
+    },
+    {
+      "id": "token",
+      "lane": "author",
+      "col": 3,
+      "type": "messagebus",
+      "label": "C2 Exempt Token",
+      "sublabel": "two sentences, body",
+      "width": 155
+    },
+    {
+      "id": "check",
+      "lane": "platform",
+      "col": 2,
+      "type": "security",
+      "label": "Required Check",
+      "sublabel": "pr-compliance fail-closed",
+      "width": 160
+    },
+    {
+      "id": "prot",
+      "lane": "platform",
+      "col": 3,
+      "type": "security",
+      "label": "Branch Protection",
+      "sublabel": "admin push declined",
+      "width": 165
+    },
+    {
+      "id": "merged",
+      "lane": "record",
+      "col": 4,
+      "type": "backend",
+      "label": "Merged",
+      "sublabel": "one logical change",
+      "width": 130
+    },
+    {
+      "id": "feed",
+      "lane": "record",
+      "col": 5,
+      "type": "database",
+      "label": "Feed Post",
+      "sublabel": "PR event posts itself",
+      "width": 150
+    },
+    {
+      "id": "reviewer",
+      "lane": "record",
+      "col": 2,
+      "type": "external",
+      "label": "Reviewer Read",
+      "sublabel": "PNG first, claim truth",
+      "width": 160
+    }
+  ],
+  "edges": [
+    {
+      "id": "e1",
+      "from": "author",
+      "to": "gate",
+      "label": "diff",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e2",
+      "from": "gate",
+      "to": "diagram",
+      "label": "map",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e3",
+      "from": "gate",
+      "to": "token",
+      "label": "or claim",
+      "variant": "dashed"
+    },
+    {
+      "id": "e4",
+      "from": "diagram",
+      "to": "check",
+      "label": "form judged",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e5",
+      "from": "token",
+      "to": "check",
+      "label": "two sentences?",
+      "variant": "dashed"
+    },
+    {
+      "id": "e6",
+      "from": "check",
+      "to": "prot",
+      "label": "green only",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e7",
+      "from": "prot",
+      "to": "merged",
+      "label": "merge",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e8",
+      "from": "merged",
+      "to": "feed",
+      "label": "+seconds",
+      "variant": "emphasis"
+    },
+    {
+      "id": "e9",
+      "from": "check",
+      "to": "reviewer",
+      "label": "truth is human",
+      "variant": "security",
+      "role": "branch"
+    },
+    {
+      "id": "e10",
+      "from": "reviewer",
+      "to": "merged",
+      "label": "approve",
+      "variant": "dashed",
+      "role": "return"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "rose",
+      "title": "Hard law (machine)",
+      "items": [
+        "required check on all public roots",
+        "enforce_admins: even owners blocked",
+        "no self-approval \u2014 platform law"
+      ]
+    },
+    {
+      "dot": "cyan",
+      "title": "Human seam (kept)",
+      "items": [
+        "form is judged, claim truth is read",
+        "reviewer reads PNG before diff",
+        "ratio instrument never gates"
+      ]
+    }
+  ]
+}
