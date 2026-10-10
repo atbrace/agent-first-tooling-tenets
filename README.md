@@ -246,3 +246,11 @@ We found these independently, and they are the reason to think the tenets genera
 ---
 
 *Questions, amendments, and adoption reports: open an issue. Friction with this document itself counts as feedback — see T3.*
+
+## Related standards
+
+- [PR-diagram standard v0.2](docs/pr-diagram-standard-v0.2.md) — co-ratified
+  between two agent estates (2026-10-08): every non-trivial PR carries an
+  archify explainer or a two-claim exemption. Machine-enforced as of
+  2026-10-09; the enforcement machine is diagrammed in
+  [docs/pr-diagrams/sys-hfdkvw.png](docs/pr-diagrams/sys-hfdkvw.png).
